@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Copyright (c) 2019 FEROX YT EIRL, www.ferox.yt <devops@ferox.yt>
+# Copyright (c) 2019 Jérémy WALTHER <jeremy.walther@golflima.net>
+# See <https://github.com/frxyt/docker-xhgui-dev> for details.
+
+set -ex
+
+# Clone xhgui
+git clone https://github.com/perftools/xhgui /app
+cd /app
+
+# Install PECL mongodb
+pecl install mongodb
+docker-php-ext-enable mongodb
+
+# Install dependancies
+composer require --update-no-dev --no-scripts alcaeus/mongo-php-adapter ^1.1
+composer install --no-interaction --no-suggest --ansi --no-dev --no-scripts --no-autoloader
+
+# Build final copy
+mkdir /xhgui
+mv /app/config /xhgui/config
+mv /app/README.md /xhgui/README.md
+mv /app/src /xhgui/src
+mv /app/vendor /xhgui/vendor
+mv /app/webroot /xhgui/webroot
+
+# Clean
+rm -rf /app

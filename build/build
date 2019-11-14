@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Copyright (c) 2019 FEROX YT EIRL, www.ferox.yt <devops@ferox.yt>
+# Copyright (c) 2019 Jérémy WALTHER <jeremy.walther@golflima.net>
+# See <https://github.com/frxyt/docker-xhgui-dev> for details.
+
+set -ex
+
+# Get PHP version
+FRX_PHP_VERSION=$(php -v | grep ^PHP | cut -d' ' -f2)
+
+# Install PECL mongodb
+pecl install mongodb
+docker-php-ext-enable mongodb
+
+# Setup mongo repository
+DEBIAN_FRONTEND=noninteractive apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y --fix-missing --no-install-recommends \
+    curl \
+    gnupg
+curl -sSL https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
+echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.2 main" > /etc/apt/sources.list.d/mongodb-org-4.2.list
+
+# Install mongodb & nginx & supervisor
+DEBIAN_FRONTEND=noninteractive apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y --fix-missing --no-install-recommends \
+    mongodb-org \
+    nginx \
+    supervisor
+
+# Move configuration files
+mv -f /frx/conf/nginx.conf /etc/nginx/sites-available/default
+mv -f /frx/conf/php-fpm.conf /usr/local/etc/php-fpm.d/zz-frx.conf
+mv -f /frx/conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Create xhgui cache folder
+mkdir /xhgui/cache
+chown www-data:www-data /xhgui/cache
+
+# Clean APT cache
+apt-get clean -y && apt-get clean -y && apt-get autoclean -y && rm -r /var/lib/apt/lists/*
+
+# Display versions
+cat /etc/debian_version
+mongo --version
+nginx -v
+php -v
+php -m

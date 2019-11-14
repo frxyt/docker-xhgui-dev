@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Copyright (c) 2019 FEROX YT EIRL, www.ferox.yt <devops@ferox.yt>
+# Copyright (c) 2019 Jérémy WALTHER <jeremy.walther@golflima.net>
+# See <https://github.com/frxyt/docker-xhgui-dev> for details.
+
+mongo 2>&1 <<"EOF"
+use xhprof
+db.results.ensureIndex( { 'meta.SERVER.REQUEST_TIME' : -1 } )
+db.results.ensureIndex( { 'profile.main().wt' : -1 } )
+db.results.ensureIndex( { 'profile.main().mu' : -1 } )
+db.results.ensureIndex( { 'profile.main().cpu' : -1 } )
+db.results.ensureIndex( { 'meta.url' : 1 } )
+db.results.ensureIndex( { "meta.request_ts" : 1 }, { expireAfterSeconds : 432000 } )
+EOF
+
+exit 0
