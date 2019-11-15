@@ -17,7 +17,69 @@ This image packages [`xhgui`](https://github.com/perftools/xhgui) with MongoDB a
 
 ## Usage
 
-TODO
+### General use
+
+1. See documentation of [`xhgui`](https://github.com/perftools/xhgui) and [`xhgui-collector`](https://github.com/perftools/xhgui-collector).
+1. Add `frxyt/xhgui-dev` to your `docker-compose.yml` file:
+   ```yaml
+   xhgui:
+     image: frxyt/xhgui-dev
+     ports:
+       - 127.0.0.1:80:80
+   ```
+
+### Example in a PHP application running with PHP 7.x
+
+1. If your `php` container is on the same `docker-compose.yml` file:
+   1. Make sure you have [`Tideways XHProf Extension`](https://github.com/tideways/php-xhprof-extension) enabled on your `php` container
+   1. Make sure your `php` and `xhgui` containers are on the same network
+   ```yaml
+   networks:
+     private:
+   services: 
+     php:
+       networks:
+         - private
+     xhgui:
+       networks:
+         - private
+   ```
+   1. Share a volume with PHP vendor path from `xhgui` to `php`:
+   ```yaml
+   volumes:
+     xhgui-vendor:
+   services:
+     php:
+       volumes:
+         - xhgui-vendor:/xhgui/vendor:ro
+     xhgui:
+       volumes:
+         - xhgui-vendor:/xhgui/vendor:rw
+   ```
+   1. Start profiling on the first script called by your webserver, typically `index.php`:
+   ```php
+   if ($_SERVER['XHGUI_PROFILING'] && \file_exists('/xhgui/vendor/perftools/xhgui-collector/external/header.php')) {
+       require_once('/xhgui/vendor/perftools/xhgui-collector/external/header.php');
+   }
+   ```
+   1. Configure and enable the profiling
+   ```yaml
+   php:
+     environment:
+       - XHGUI_PROFILING=1
+       - XHGUI_SAVE_HANDLER=upload
+   ```
+
+### Full example
+
+You can see a full example here: [`tests/docker-compose.yml`](tests/docker-compose.yml), [`tests/index.php`](tests/index.php).
+
+1. `git checkout https://github.com/frxyt/docker-xhgui-dev`
+1. `cd docker-xhgui-dev/tests`
+1. `docker-compose up`
+1. Browse:
+   * The example app: http://localhost
+   * XhGui : http://xhgui.localhost
 
 ## Build
 

@@ -1,0 +1,77 @@
+version: '3.7'
+   
+networks:
+  private:
+    name: private
+  public:
+    name: public
+
+volumes:
+  xhgui-vendor:
+ 
+services:
+
+  nginx:
+    image: frxyt/nginx-dev
+    depends_on:
+      - php
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.entrypoints=web"
+      - "traefik.http.routers.nginx.rule=Host(`localhost`)"
+    networks:
+      - private
+      - public
+    volumes:
+      - ./:/var/www/html:ro
+
+  php:
+    image: frxyt/php-dev:7.3-fpm
+    depends_on:
+      - xhgui
+    environment:
+      - FRX_APT_GET_INSTALL=libgd-dev libjpeg62-turbo-dev
+      - FRX_PHP_EXT_CONFIGURE=gd --with-jpeg-dir=/usr/include/
+      - FRX_PHP_EXT_INSTALL=gd
+      - XHGUI_PROFILING=1
+      - XHGUI_SAVE_HANDLER=upload
+    networks:
+      - private
+    volumes:
+      - ./:/var/www/html:rw
+      - xhgui-vendor:/xhgui/vendor:ro
+
+  traefik:
+    image: traefik:2.0
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=public"
+      - "--entrypoints.web.address=:80"
+    depends_on:
+      - nginx
+      - xhgui
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+    networks: 
+      - public
+    ports:
+      - 127.0.0.1:80:80
+    volumes:
+      - //var/run/docker.sock:/var/run/docker.sock:ro
+  
+  xhgui:
+    image: frxyt/xhgui-dev
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.xhgui.entrypoints=web"
+      - "traefik.http.routers.xhgui.rule=Host(`xhgui.localhost`)"
+    networks:
+      - private
+      - public
+    volumes:
+      - xhgui-vendor:/xhgui/vendor:rw
