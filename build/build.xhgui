@@ -21,6 +21,7 @@ composer install --no-interaction --no-suggest --ansi --no-dev --no-scripts --no
 # Build final copy
 mkdir /xhgui
 mv /app/config /xhgui/config
+mv /app/external /xhgui/external
 mv /app/README.md /xhgui/README.md
 mv /app/src /xhgui/src
 mv /app/vendor /xhgui/vendor

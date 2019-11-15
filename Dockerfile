@@ -13,8 +13,9 @@ FROM php:7.3-fpm
 LABEL maintainer="Jérémy WALTHER <jeremy@ferox.yt>"
 
 COPY --from=build /xhgui /xhgui
-COPY build/ Dockerfile LICENSE README.md /frx/
+COPY build /frx/
 RUN /frx/build
+COPY Dockerfile LICENSE README.md /frx/
 
 WORKDIR /xhgui
 VOLUME [ "/xhgui/config", "/xhgui/external", "/xhgui/log", "/xhgui/mongodb" ]
