@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Copyright (c) 2019 FEROX YT EIRL, www.ferox.yt <devops@ferox.yt>
+# Copyright (c) 2019 Jérémy WALTHER <jeremy.walther@golflima.net>
+# See <https://github.com/frxyt/docker-xhgui-dev> for details.
+
+# Prepare import folder
+mkdir -p /xhgui/import
+chmod 644 /xhgui/import
+
+# Declare import function
+function xhgui_import {
+    /usr/local/bin/php /xhgui/external/import.php -f $1
+    rm -f $1
+}
+
+# Upload already existing files
+
+# Monitor file changes
+inotifywait -m /xhgui/import -e create -e moved_to |
+    while read path action file; do
+        echo "File change detected: path:'${path}', action:'${action}', file:'${file}'"
+        xhgui_import $file
+    done
