@@ -18,7 +18,7 @@ RUN /frx/build
 COPY Dockerfile LICENSE README.md /frx/
 
 WORKDIR /xhgui
-VOLUME [ "/xhgui/config", "/xhgui/external", "/xhgui/log", "/xhgui/mongodb" ]
+VOLUME [ "/xhgui/config", "/xhgui/external", "/xhgui/log", "/xhgui/mongodb", "/xhgui/vendor" ]
 EXPOSE 80
 ENTRYPOINT [ "/bin/sh", "-c" ]
 CMD [ "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf" ]
