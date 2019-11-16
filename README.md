@@ -81,6 +81,21 @@ You can see a full example here: [`tests/docker-compose.yml`](tests/docker-compo
    * The example app: http://localhost
    * XhGui : http://xhgui.localhost
 
+### Special environmnent variables for the custom embedded `xhgui-collector` configuration
+
+This image embed a custom configuration file for [`xhgui-collector`](https://github.com/perftools/xhgui-collector) if you mount its volume to your php container and incude `/xhgui/vendor/perftools/xhgui-collector/external/header.php` in your code. You can take advantage of this by setting environment variables on your php container:
+
+* `XHGUI_PROFILING`: This variable is not set by default, set it to any value to enable the profiling.
+* `XHGUI_SAVE_HANDLER`: This variable can be set to `file`, `mongodb` or `upload`. Default and fallback is `mongodb` to respect the original behavior of the library.
+    * With `file`, you must set `XHGUI_SAVE_HANDLER_FILENAME` to choose where the files will be saved inside your php container.
+    * With `upload`:
+        * You can set `XHGUI_SAVE_HANDLER_UPLOAD_URI` to change the full uri of `xhgui` import api, defaults to: `http://xhgui/run/import`.
+        * You can set `XHGUI_SAVE_HANDLER_UPLOAD_HOST` to change the host of `xhgui`, defaults to: `xhgui`.
+        * You can set `XHGUI_SAVE_HANDLER_UPLOAD_TIMEOUT` to change the timeout of uploads to `xhgui` in seconds, defaults to: `3` seconds.
+    * With `mongodb`:
+        * You can set `XHGUI_MONGO_URI` to change the host of `xhgui` MongoDB database, defaults to: `xhgui:27017`.
+        * You can set `XHGUI_MONGO_DB` to change the name of the database used by `xhgui`, defaults to: `xhprof`.
+
 ## Build
 
 ```sh
