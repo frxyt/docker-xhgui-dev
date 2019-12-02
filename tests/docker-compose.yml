@@ -26,13 +26,10 @@ services:
       - ./:/var/www/html:ro
 
   php:
-    image: frxyt/php-dev:7.3-fpm
+    image: frxyt/php-dev-full:7.3-fpm
     depends_on:
       - xhgui
     environment:
-      - FRX_APT_GET_INSTALL=libgd-dev libjpeg62-turbo-dev
-      - FRX_PHP_EXT_CONFIGURE=gd --with-jpeg-dir=/usr/include/
-      - FRX_PHP_EXT_INSTALL=gd
       - XHGUI_PROFILING=1
       - XHGUI_SAVE_HANDLER=upload
     networks:
