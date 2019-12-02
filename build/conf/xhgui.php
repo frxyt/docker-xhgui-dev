@@ -39,7 +39,7 @@ return array_merge(array(
 (getenv('XHGUI_SAVE_HANDLER') === 'file' ? array(
     // Configuration for 'file' save handler
     'save.handler' => 'file',
-    'save.handler.filename' => (getenv('XHGUI_SAVE_HANDLER_FILENAME') ?: dirname(__DIR__) . '/cache/')
+    'save.handler.filename' => (getenv('XHGUI_SAVE_HANDLER_FILENAME') ?: (getenv('XHGUI_SAVE_HANDLER_FILEPATH') ?: dirname(__DIR__) . '/cache/'))
         . 'xhgui.data.' . microtime(true) . '_' . substr(md5($_SERVER['REQUEST_URI']), 0, 6),
 ) : (getenv('XHGUI_SAVE_HANDLER') === 'upload' ? array(
     // Configuration for 'upload' save handler

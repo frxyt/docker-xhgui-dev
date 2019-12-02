@@ -4,6 +4,13 @@
 # Copyright (c) 2019 Jérémy WALTHER <jeremy.walther@golflima.net>
 # See <https://github.com/frxyt/docker-xhgui-dev> for details.
 
+# Wait for MongoDB to start
+while [[ ! $(supervisorctl status mongodb) =~ RUNNING ]]; do
+    sleep 1
+done
+
+# Ensure MongoDB has the right indexes
+# See: https://github.com/perftools/xhgui#installation-from-source
 mongo 2>&1 <<"EOF"
 use xhprof
 db.results.ensureIndex( { 'meta.SERVER.REQUEST_TIME' : -1 } )
@@ -14,4 +21,6 @@ db.results.ensureIndex( { 'meta.url' : 1 } )
 db.results.ensureIndex( { "meta.request_ts" : 1 }, { expireAfterSeconds : 432000 } )
 EOF
 
+# Exit
+echo "Ready !"
 exit 0

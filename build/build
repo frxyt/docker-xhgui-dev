@@ -28,11 +28,15 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y --fix-missing --no-install-rec
     nginx \
     supervisor
 
+# Move scripts
+mv -f /frx/log      /usr/local/bin/frx-log 
+mv -f /frx/start    /usr/local/bin/frx-start 
+
 # Move configuration files
-mv -f /frx/conf/nginx.conf /etc/nginx/sites-available/default
-mv -f /frx/conf/php-fpm.conf /usr/local/etc/php-fpm.d/zz-frx.conf
-mv -f /frx/conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-mv -f /frx/conf/xhgui.php /xhgui/vendor/perftools/xhgui-collector/config/config.default.php
+mv -f /frx/conf/nginx.conf          /etc/nginx/sites-available/default
+mv -f /frx/conf/php-fpm.conf        /usr/local/etc/php-fpm.d/zz-frx.conf
+mv -f /frx/conf/supervisord.conf    /etc/supervisor/supervisord.conf
+mv -f /frx/conf/xhgui.php           /xhgui/vendor/perftools/xhgui-collector/config/config.default.php
 
 # Create xhgui cache folder
 mkdir /xhgui/cache

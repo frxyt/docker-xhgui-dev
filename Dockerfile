@@ -17,8 +17,11 @@ COPY build /frx/
 RUN /frx/build
 COPY Dockerfile LICENSE README.md /frx/
 
+ENV FRX_LOG_PREFIX_MAXLEN=7
+
 WORKDIR /xhgui
-VOLUME [ "/xhgui/config", "/xhgui/external", "/xhgui/log", "/xhgui/mongodb", "/xhgui/vendor" ]
+VOLUME [ "/xhgui/mongodb" ]
 EXPOSE 80
+EXPOSE 27017
 ENTRYPOINT [ "/bin/sh", "-c" ]
-CMD [ "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf" ]
+CMD [ "/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf" ]
